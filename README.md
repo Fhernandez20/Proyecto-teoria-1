@@ -33,4 +33,3 @@ Incluye el modelo entidad–relación (ERD), el archivo DBML y el script SQL com
 
 ---
 
-Fase 1 completada.
