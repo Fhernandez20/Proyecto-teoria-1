@@ -11,57 +11,94 @@ CREATE PROCEDURE sp_insertar_presupuesto_detalle(
 )
 BEGIN
   INSERT INTO presupuestodetalle (
-    id_detalle, id_presupuesto, id_subcategoria, monto_mensual, observaciones
+    id_detalle,
+    id_presupuesto,
+    id_subcategoria,
+    monto_mensual,
+    observaciones,
+    creado_por,
+    modificado_por
   )
   VALUES (
-    CONCAT('PD_', LEFT(REPLACE(UUID(),'-',''), 23)),
-    p_id_presupuesto, p_id_subcategoria, p_monto_mensual, p_observaciones
+    CONCAT('DET_', LEFT(REPLACE(UUID(),'-',''), 22)),
+    p_id_presupuesto,
+    p_id_subcategoria,
+    p_monto_mensual,
+    p_observaciones,
+    p_creado_por,
+    p_creado_por
   );
 END//
 
 DROP PROCEDURE IF EXISTS sp_actualizar_presupuesto_detalle//
 CREATE PROCEDURE sp_actualizar_presupuesto_detalle(
   IN p_id_detalle VARCHAR(30),
+  IN p_id_subcategoria VARCHAR(30),
   IN p_monto_mensual DECIMAL(12,2),
   IN p_observaciones VARCHAR(200),
   IN p_modificado_por VARCHAR(30)
 )
 BEGIN
   UPDATE presupuestodetalle
-  SET monto_mensual = p_monto_mensual,
-      observaciones = p_observaciones
+  SET id_subcategoria = p_id_subcategoria,
+      monto_mensual = p_monto_mensual,
+      observaciones = p_observaciones,
+      modificado_por = p_modificado_por
   WHERE id_detalle = p_id_detalle;
 END//
 
 DROP PROCEDURE IF EXISTS sp_eliminar_presupuesto_detalle//
 CREATE PROCEDURE sp_eliminar_presupuesto_detalle(IN p_id_detalle VARCHAR(30))
 BEGIN
-  DELETE FROM presupuestodetalle WHERE id_detalle = p_id_detalle;
+  DELETE FROM presupuestodetalle
+  WHERE id_detalle = p_id_detalle;
 END//
 
 DROP PROCEDURE IF EXISTS sp_consultar_presupuesto_detalle//
 CREATE PROCEDURE sp_consultar_presupuesto_detalle(IN p_id_detalle VARCHAR(30))
 BEGIN
-  SELECT pd.*,
-         s.nombre_subcategoria,
-         c.nombre_categoria, c.tipo_categoria
+  SELECT
+    pd.id_detalle,
+    pd.id_presupuesto,
+    pd.id_subcategoria,
+    pd.monto_mensual,
+    pd.observaciones,
+    sc.nombre_subcategoria,
+    c.nombre_categoria,
+    pd.creado_por,
+    pd.modificado_por,
+    pd.creado_en,
+    pd.modificado_en
   FROM presupuestodetalle pd
-  JOIN subcategoria s ON s.id_subcategoria = pd.id_subcategoria
-  JOIN categoria c ON c.id_categoria = s.id_categoria
+  INNER JOIN subcategoria sc
+    ON pd.id_subcategoria = sc.id_subcategoria
+  INNER JOIN categoria c
+    ON sc.id_categoria = c.id_categoria
   WHERE pd.id_detalle = p_id_detalle;
 END//
 
 DROP PROCEDURE IF EXISTS sp_listar_detalles_presupuesto//
 CREATE PROCEDURE sp_listar_detalles_presupuesto(IN p_id_presupuesto VARCHAR(30))
 BEGIN
-  SELECT pd.*,
-         s.nombre_subcategoria,
-         c.nombre_categoria, c.tipo_categoria
+  SELECT
+    pd.id_detalle,
+    pd.id_presupuesto,
+    pd.id_subcategoria,
+    c.nombre_categoria,
+    sc.nombre_subcategoria,
+    pd.monto_mensual,
+    pd.observaciones,
+    pd.creado_por,
+    pd.modificado_por,
+    pd.creado_en,
+    pd.modificado_en
   FROM presupuestodetalle pd
-  JOIN subcategoria s ON s.id_subcategoria = pd.id_subcategoria
-  JOIN categoria c ON c.id_categoria = s.id_categoria
+  INNER JOIN subcategoria sc
+    ON pd.id_subcategoria = sc.id_subcategoria
+  INNER JOIN categoria c
+    ON sc.id_categoria = c.id_categoria
   WHERE pd.id_presupuesto = p_id_presupuesto
-  ORDER BY c.nombre_categoria, s.nombre_subcategoria;
+  ORDER BY c.nombre_categoria, sc.nombre_subcategoria;
 END//
 
 DELIMITER ;
