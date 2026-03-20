@@ -7,7 +7,11 @@ CREATE TABLE `Usuario` (
   `correo` varchar(100),
   `fecha_registro` datetime,
   `salario_mensual` decimal(12,2),
-  `estado` bool
+  `estado` bool,
+  `creado_por` varchar(30) NOT NULL,
+  `modificado_por` varchar(30) NOT NULL,
+  `creado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modificado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `Presupuesto` (
@@ -22,7 +26,11 @@ CREATE TABLE `Presupuesto` (
   `total_gastos` decimal(12,2),
   `total_ahorro` decimal(12,2),
   `fecha_creacion` datetime,
-  `estado` varchar(15)
+  `estado` varchar(15),
+  `creado_por` varchar(30) NOT NULL,
+  `modificado_por` varchar(30) NOT NULL,
+  `creado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modificado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `Categoria` (
@@ -30,7 +38,11 @@ CREATE TABLE `Categoria` (
   `id_usuario` varchar(30),
   `nombre_categoria` varchar(50),
   `descripcion` varchar(150),
-  `tipo_categoria` varchar(10)
+  `tipo_categoria` varchar(10),
+  `creado_por` varchar(30) NOT NULL,
+  `modificado_por` varchar(30) NOT NULL,
+  `creado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modificado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `Subcategoria` (
@@ -39,7 +51,11 @@ CREATE TABLE `Subcategoria` (
   `nombre_subcategoria` varchar(50),
   `descripcion` varchar(150),
   `indicador_activo` bool,
-  `es_defecto` bool
+  `es_defecto` bool,
+  `creado_por` varchar(30) NOT NULL,
+  `modificado_por` varchar(30) NOT NULL,
+  `creado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modificado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `PresupuestoDetalle` (
@@ -47,7 +63,11 @@ CREATE TABLE `PresupuestoDetalle` (
   `id_presupuesto` varchar(30),
   `id_subcategoria` varchar(30),
   `monto_mensual` decimal(12,2),
-  `observaciones` varchar(200)
+  `observaciones` varchar(200),
+  `creado_por` varchar(30) NOT NULL,
+  `modificado_por` varchar(30) NOT NULL,
+  `creado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modificado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `ObligacionFija` (
@@ -60,7 +80,11 @@ CREATE TABLE `ObligacionFija` (
   `dia_vencimiento` int,
   `vigente` bool,
   `fecha_inicio` date,
-  `fecha_fin` date
+  `fecha_fin` date,
+  `creado_por` varchar(30) NOT NULL,
+  `modificado_por` varchar(30) NOT NULL,
+  `creado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modificado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `Transaccion` (
@@ -77,13 +101,21 @@ CREATE TABLE `Transaccion` (
   `metodo_pago` varchar(20),
   `num_factura` varchar(40),
   `observaciones` varchar(200),
-  `fecha_registro` datetime
+  `fecha_registro` datetime,
+  `creado_por` varchar(30) NOT NULL,
+  `modificado_por` varchar(30) NOT NULL,
+  `creado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modificado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `ObligacionFija_Transaccion` (
   `id_relacion` varchar(30) PRIMARY KEY,
   `id_obligacion` varchar(30),
-  `id_transaccion` varchar(30)
+  `id_transaccion` varchar(30),
+  `creado_por` varchar(30) NOT NULL,
+  `modificado_por` varchar(30) NOT NULL,
+  `creado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modificado_en` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 ALTER TABLE `Presupuesto` ADD FOREIGN KEY (`id_usuario`) REFERENCES `Usuario` (`id_usuario`);
