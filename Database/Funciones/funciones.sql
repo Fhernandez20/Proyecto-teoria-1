@@ -5,6 +5,7 @@ DELIMITER //
 DROP FUNCTION IF EXISTS fn_calcular_monto_ejecutado//
 CREATE FUNCTION fn_calcular_monto_ejecutado(
   p_id_subcategoria VARCHAR(30),
+  p_id_presupuesto VARCHAR(30),
   p_anio INT,
   p_mes INT
 )
@@ -13,12 +14,13 @@ DETERMINISTIC
 BEGIN
   DECLARE v_total DECIMAL(12,2);
 
-  SELECT IFNULL(SUM(monto),0)
+  SELECT IFNULL(SUM(t.monto),0)
   INTO v_total
-  FROM transaccion
-  WHERE id_subcategoria = p_id_subcategoria
-    AND anio = p_anio
-    AND mes = p_mes;
+  FROM transaccion t
+  WHERE t.id_subcategoria = p_id_subcategoria
+    AND t.id_presupuesto = p_id_presupuesto
+    AND t.anio = p_anio
+    AND t.mes = p_mes;
 
   RETURN v_total;
 END//
@@ -37,13 +39,18 @@ BEGIN
   DECLARE v_ejecutado DECIMAL(12,2);
   DECLARE v_presup DECIMAL(12,2);
 
-  SET v_ejecutado = fn_calcular_monto_ejecutado(p_id_subcategoria, p_anio, p_mes);
+  SET v_ejecutado = fn_calcular_monto_ejecutado(
+    p_id_subcategoria,
+    p_id_presupuesto,
+    p_anio,
+    p_mes
+  );
 
-  SELECT IFNULL(monto_mensual,0)
+  SELECT IFNULL(pd.monto_mensual,0)
   INTO v_presup
-  FROM presupuestodetalle
-  WHERE id_presupuesto = p_id_presupuesto
-    AND id_subcategoria = p_id_subcategoria
+  FROM presupuestodetalle pd
+  WHERE pd.id_presupuesto = p_id_presupuesto
+    AND pd.id_subcategoria = p_id_subcategoria
   LIMIT 1;
 
   IF v_presup = 0 THEN
@@ -67,13 +74,18 @@ BEGIN
   DECLARE v_ejecutado DECIMAL(12,2);
   DECLARE v_presup DECIMAL(12,2);
 
-  SET v_ejecutado = fn_calcular_monto_ejecutado(p_id_subcategoria, p_anio, p_mes);
+  SET v_ejecutado = fn_calcular_monto_ejecutado(
+    p_id_subcategoria,
+    p_id_presupuesto,
+    p_anio,
+    p_mes
+  );
 
-  SELECT IFNULL(monto_mensual,0)
+  SELECT IFNULL(pd.monto_mensual,0)
   INTO v_presup
-  FROM presupuestodetalle
-  WHERE id_presupuesto = p_id_presupuesto
-    AND id_subcategoria = p_id_subcategoria
+  FROM presupuestodetalle pd
+  WHERE pd.id_presupuesto = p_id_presupuesto
+    AND pd.id_subcategoria = p_id_subcategoria
   LIMIT 1;
 
   RETURN (v_presup - v_ejecutado);
@@ -107,6 +119,7 @@ END//
 DROP FUNCTION IF EXISTS fn_obtener_total_ejecutado_categoria_mes//
 CREATE FUNCTION fn_obtener_total_ejecutado_categoria_mes(
   p_id_categoria VARCHAR(30),
+  p_id_presupuesto VARCHAR(30),
   p_anio INT,
   p_mes INT
 )
@@ -121,6 +134,7 @@ BEGIN
   INNER JOIN subcategoria s
     ON s.id_subcategoria = t.id_subcategoria
   WHERE s.id_categoria = p_id_categoria
+    AND t.id_presupuesto = p_id_presupuesto
     AND t.anio = p_anio
     AND t.mes = p_mes;
 
@@ -141,10 +155,11 @@ BEGIN
 
   SET v_hoy = CURDATE();
 
-  SELECT dia_vencimiento
+  SELECT o.dia_vencimiento
   INTO v_dia
-  FROM obligacionfija
-  WHERE id_obligacion = p_id_obligacion;
+  FROM obligacionfija o
+  WHERE o.id_obligacion = p_id_obligacion
+  LIMIT 1;
 
   SET v_target = STR_TO_DATE(
     CONCAT(YEAR(v_hoy), '-', LPAD(MONTH(v_hoy),2,'0'), '-', LPAD(v_dia,2,'0')),
@@ -167,11 +182,16 @@ BEGIN
   DECLARE v_fin DATE;
 
   SELECT
-    STR_TO_DATE(CONCAT(init_year,'-',LPAD(init_month,2,'0'),'-01'), '%Y-%m-%d'),
-    LAST_DAY(STR_TO_DATE(CONCAT(end_year,'-',LPAD(end_month,2,'0'),'-01'), '%Y-%m-%d'))
+    STR_TO_DATE(CONCAT(p.init_year,'-',LPAD(p.init_month,2,'0'),'-01'), '%Y-%m-%d'),
+    LAST_DAY(STR_TO_DATE(CONCAT(p.end_year,'-',LPAD(p.end_month,2,'0'),'-01'), '%Y-%m-%d'))
   INTO v_ini, v_fin
-  FROM presupuesto
-  WHERE id_presupuesto = p_id_presupuesto;
+  FROM presupuesto p
+  WHERE p.id_presupuesto = p_id_presupuesto
+  LIMIT 1;
+
+  IF v_ini IS NULL OR v_fin IS NULL THEN
+    RETURN 0;
+  END IF;
 
   IF p_fecha BETWEEN v_ini AND v_fin THEN
     RETURN 1;
@@ -190,10 +210,11 @@ DETERMINISTIC
 BEGIN
   DECLARE v_cat VARCHAR(30);
 
-  SELECT id_categoria
+  SELECT s.id_categoria
   INTO v_cat
-  FROM subcategoria
-  WHERE id_subcategoria = p_id_subcategoria;
+  FROM subcategoria s
+  WHERE s.id_subcategoria = p_id_subcategoria
+  LIMIT 1;
 
   RETURN v_cat;
 END//
@@ -202,6 +223,7 @@ END//
 DROP FUNCTION IF EXISTS fn_calcular_proyeccion_gasto_mensual//
 CREATE FUNCTION fn_calcular_proyeccion_gasto_mensual(
   p_id_subcategoria VARCHAR(30),
+  p_id_presupuesto VARCHAR(30),
   p_anio INT,
   p_mes INT
 )
@@ -214,7 +236,13 @@ BEGIN
   DECLARE v_dia_actual INT;
 
   SET v_hoy = CURDATE();
-  SET v_ejecutado = fn_calcular_monto_ejecutado(p_id_subcategoria, p_anio, p_mes);
+
+  SET v_ejecutado = fn_calcular_monto_ejecutado(
+    p_id_subcategoria,
+    p_id_presupuesto,
+    p_anio,
+    p_mes
+  );
 
   SET v_dias_mes = DAY(
     LAST_DAY(
@@ -247,14 +275,16 @@ DETERMINISTIC
 BEGIN
   DECLARE v_prom DECIMAL(12,2);
 
-  SELECT IFNULL(AVG(monto),0)
+  SELECT IFNULL(AVG(x.total_mes),0)
   INTO v_prom
   FROM (
-    SELECT t.monto
+    SELECT SUM(t.monto) AS total_mes
     FROM transaccion t
     WHERE t.id_usuario = p_id_usuario
       AND t.id_subcategoria = p_id_subcategoria
-    ORDER BY t.anio DESC, t.mes DESC, t.fecha DESC
+      AND t.tipo = 'gasto'
+    GROUP BY t.anio, t.mes
+    ORDER BY t.anio DESC, t.mes DESC
     LIMIT p_cantidad_meses
   ) x;
 
