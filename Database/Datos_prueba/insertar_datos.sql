@@ -23,6 +23,7 @@ SET @id_usuario = (
   ORDER BY fecha_registro DESC
   LIMIT 1
 );
+
 -- ---------------------------------------------------------
 -- 2) CATEGORIAS
 -- El trigger crea automáticamente subcategoría "General"
@@ -36,44 +37,58 @@ CALL sp_insertar_categoria('Entretenimiento', 'Gastos recreativos', 'gasto', @id
 CALL sp_insertar_categoria('Ahorro', 'Apartados y metas de ahorro', 'ahorro', @id_usuario, 'admin');
 
 SET @cat_ingresos = (
-  SELECT id_categoria FROM categoria
-  WHERE id_usuario = @id_usuario AND nombre_categoria = 'Ingresos'
+  SELECT id_categoria
+  FROM categoria
+  WHERE id_usuario = @id_usuario
+    AND nombre_categoria = 'Ingresos'
   LIMIT 1
 );
 
 SET @cat_alimentacion = (
-  SELECT id_categoria FROM categoria
-  WHERE id_usuario = @id_usuario AND nombre_categoria = 'Alimentacion'
+  SELECT id_categoria
+  FROM categoria
+  WHERE id_usuario = @id_usuario
+    AND nombre_categoria = 'Alimentacion'
   LIMIT 1
 );
 
 SET @cat_vivienda = (
-  SELECT id_categoria FROM categoria
-  WHERE id_usuario = @id_usuario AND nombre_categoria = 'Vivienda y Servicios'
+  SELECT id_categoria
+  FROM categoria
+  WHERE id_usuario = @id_usuario
+    AND nombre_categoria = 'Vivienda y Servicios'
   LIMIT 1
 );
 
 SET @cat_transporte = (
-  SELECT id_categoria FROM categoria
-  WHERE id_usuario = @id_usuario AND nombre_categoria = 'Transporte'
+  SELECT id_categoria
+  FROM categoria
+  WHERE id_usuario = @id_usuario
+    AND nombre_categoria = 'Transporte'
   LIMIT 1
 );
 
 SET @cat_salud = (
-  SELECT id_categoria FROM categoria
-  WHERE id_usuario = @id_usuario AND nombre_categoria = 'Salud'
+  SELECT id_categoria
+  FROM categoria
+  WHERE id_usuario = @id_usuario
+    AND nombre_categoria = 'Salud'
   LIMIT 1
 );
 
 SET @cat_entretenimiento = (
-  SELECT id_categoria FROM categoria
-  WHERE id_usuario = @id_usuario AND nombre_categoria = 'Entretenimiento'
+  SELECT id_categoria
+  FROM categoria
+  WHERE id_usuario = @id_usuario
+    AND nombre_categoria = 'Entretenimiento'
   LIMIT 1
 );
 
 SET @cat_ahorro = (
-  SELECT id_categoria FROM categoria
-  WHERE id_usuario = @id_usuario AND nombre_categoria = 'Ahorro'
+  SELECT id_categoria
+  FROM categoria
+  WHERE id_usuario = @id_usuario
+    AND nombre_categoria = 'Ahorro'
   LIMIT 1
 );
 
@@ -103,92 +118,122 @@ CALL sp_insertar_subcategoria(@cat_entretenimiento, 'Salidas', 'Cine, café o re
 CALL sp_insertar_subcategoria(@cat_ahorro, 'Fondo de Emergencia', 'Dinero apartado para ahorro', 0, 'admin');
 
 SET @sub_salario = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_ingresos AND nombre_subcategoria = 'Salario Base'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_ingresos
+    AND nombre_subcategoria = 'Salario Base'
   LIMIT 1
 );
 
 SET @sub_ingreso_extra = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_ingresos AND nombre_subcategoria = 'Ingreso Extra'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_ingresos
+    AND nombre_subcategoria = 'Ingreso Extra'
   LIMIT 1
 );
 
 SET @sub_supermercado = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_alimentacion AND nombre_subcategoria = 'Supermercado'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_alimentacion
+    AND nombre_subcategoria = 'Supermercado'
   LIMIT 1
 );
 
 SET @sub_restaurantes = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_alimentacion AND nombre_subcategoria = 'Restaurantes'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_alimentacion
+    AND nombre_subcategoria = 'Restaurantes'
   LIMIT 1
 );
 
 SET @sub_alquiler = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_vivienda AND nombre_subcategoria = 'Alquiler'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_vivienda
+    AND nombre_subcategoria = 'Alquiler'
   LIMIT 1
 );
 
 SET @sub_internet = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_vivienda AND nombre_subcategoria = 'Internet'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_vivienda
+    AND nombre_subcategoria = 'Internet'
   LIMIT 1
 );
 
 SET @sub_energia = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_vivienda AND nombre_subcategoria = 'Energia Electrica'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_vivienda
+    AND nombre_subcategoria = 'Energia Electrica'
   LIMIT 1
 );
 
 SET @sub_agua = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_vivienda AND nombre_subcategoria = 'Agua'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_vivienda
+    AND nombre_subcategoria = 'Agua'
   LIMIT 1
 );
 
 SET @sub_streaming = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_vivienda AND nombre_subcategoria = 'Streaming'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_vivienda
+    AND nombre_subcategoria = 'Streaming'
   LIMIT 1
 );
 
 SET @sub_combustible = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_transporte AND nombre_subcategoria = 'Combustible'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_transporte
+    AND nombre_subcategoria = 'Combustible'
   LIMIT 1
 );
 
 SET @sub_taxi_bus = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_transporte AND nombre_subcategoria = 'Taxi o Bus'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_transporte
+    AND nombre_subcategoria = 'Taxi o Bus'
   LIMIT 1
 );
 
 SET @sub_farmacia = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_salud AND nombre_subcategoria = 'Farmacia'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_salud
+    AND nombre_subcategoria = 'Farmacia'
   LIMIT 1
 );
 
 SET @sub_consulta = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_salud AND nombre_subcategoria = 'Consulta Medica'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_salud
+    AND nombre_subcategoria = 'Consulta Medica'
   LIMIT 1
 );
 
 SET @sub_salidas = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_entretenimiento AND nombre_subcategoria = 'Salidas'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_entretenimiento
+    AND nombre_subcategoria = 'Salidas'
   LIMIT 1
 );
 
 SET @sub_fondo = (
-  SELECT id_subcategoria FROM subcategoria
-  WHERE id_categoria = @cat_ahorro AND nombre_subcategoria = 'Fondo de Emergencia'
+  SELECT id_subcategoria
+  FROM subcategoria
+  WHERE id_categoria = @cat_ahorro
+    AND nombre_subcategoria = 'Fondo de Emergencia'
   LIMIT 1
 );
 
@@ -241,7 +286,6 @@ CALL sp_insertar_presupuesto_detalle(@id_presupuesto, @sub_fondo, 2000.00, 'Ahor
 
 -- ---------------------------------------------------------
 -- 6) OBLIGACIONES FIJAS
--- Las transacciones se registrarán cerca del vencimiento
 -- ---------------------------------------------------------
 CALL sp_insertar_obligacion(
   @id_usuario, @sub_alquiler, 'Alquiler apartamento', 'Pago mensual de renta',
@@ -269,39 +313,48 @@ CALL sp_insertar_obligacion(
 );
 
 SET @obl_alquiler = (
-  SELECT id_obligacion FROM obligacionfija
-  WHERE id_usuario = @id_usuario AND nombre = 'Alquiler apartamento'
+  SELECT id_obligacion
+  FROM obligacionfija
+  WHERE id_usuario = @id_usuario
+    AND nombre = 'Alquiler apartamento'
   LIMIT 1
 );
 
 SET @obl_internet = (
-  SELECT id_obligacion FROM obligacionfija
-  WHERE id_usuario = @id_usuario AND nombre = 'Internet hogar'
+  SELECT id_obligacion
+  FROM obligacionfija
+  WHERE id_usuario = @id_usuario
+    AND nombre = 'Internet hogar'
   LIMIT 1
 );
 
 SET @obl_energia = (
-  SELECT id_obligacion FROM obligacionfija
-  WHERE id_usuario = @id_usuario AND nombre = 'Energia electrica'
+  SELECT id_obligacion
+  FROM obligacionfija
+  WHERE id_usuario = @id_usuario
+    AND nombre = 'Energia electrica'
   LIMIT 1
 );
 
 SET @obl_agua = (
-  SELECT id_obligacion FROM obligacionfija
-  WHERE id_usuario = @id_usuario AND nombre = 'Agua potable'
+  SELECT id_obligacion
+  FROM obligacionfija
+  WHERE id_usuario = @id_usuario
+    AND nombre = 'Agua potable'
   LIMIT 1
 );
 
 SET @obl_streaming = (
-  SELECT id_obligacion FROM obligacionfija
-  WHERE id_usuario = @id_usuario AND nombre = 'Suscripcion streaming'
+  SELECT id_obligacion
+  FROM obligacionfija
+  WHERE id_usuario = @id_usuario
+    AND nombre = 'Suscripcion streaming'
   LIMIT 1
 );
 
 -- =========================================================
 -- 7) TRANSACCIONES ENERO 2026
 -- =========================================================
-
 CALL sp_insertar_transaccion(@id_usuario, @id_presupuesto, 2026, 1, @sub_salario, NULL, 'ingreso',
 'Salario mensual enero', 18000.00, '2026-01-01', 'transferencia', 'ING-2026-01-001', 'Pago de planilla', 'admin');
 
@@ -365,7 +418,6 @@ CALL sp_insertar_transaccion(@id_usuario, @id_presupuesto, 2026, 1, @sub_consult
 -- =========================================================
 -- 8) TRANSACCIONES FEBRERO 2026
 -- =========================================================
-
 CALL sp_insertar_transaccion(@id_usuario, @id_presupuesto, 2026, 2, @sub_salario, NULL, 'ingreso',
 'Salario mensual febrero', 18000.00, '2026-02-01', 'transferencia', 'ING-2026-02-001', 'Pago de planilla', 'admin');
 
@@ -423,7 +475,6 @@ CALL sp_insertar_transaccion(@id_usuario, @id_presupuesto, 2026, 2, @sub_taxi_bu
 -- =========================================================
 -- 9) CONSULTAS DE VERIFICACION
 -- =========================================================
-
 SELECT 'USUARIO CREADO' AS info, @id_usuario AS id_usuario;
 SELECT 'PRESUPUESTO CREADO' AS info, @id_presupuesto AS id_presupuesto;
 
@@ -435,6 +486,7 @@ ORDER BY anio, mes, tipo;
 
 SELECT t.anio, t.mes, t.fecha, t.descripcion, t.tipo, t.monto, s.nombre_subcategoria
 FROM transaccion t
-JOIN subcategoria s ON s.id_subcategoria = t.id_subcategoria
+INNER JOIN subcategoria s
+  ON s.id_subcategoria = t.id_subcategoria
 WHERE t.id_presupuesto = @id_presupuesto
 ORDER BY t.fecha, t.fecha_registro;
