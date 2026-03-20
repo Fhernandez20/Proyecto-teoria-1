@@ -1,7 +1,7 @@
 USE presupuesto_personal;
-DELIMITER //
 
-DROP TRIGGER IF EXISTS trg_categoria_crear_subcategoria//
+DROP TRIGGER IF EXISTS trg_categoria_crear_subcategoria;
+DELIMITER //
 
 CREATE TRIGGER trg_categoria_crear_subcategoria
 AFTER INSERT ON categoria
@@ -13,15 +13,19 @@ BEGIN
     nombre_subcategoria,
     descripcion,
     indicador_activo,
-    es_defecto
+    es_defecto,
+    creado_por,
+    modificado_por
   )
   VALUES(
-    CONCAT('SUB_', NEW.id_categoria),
+    CONCAT('SUB_', LEFT(REPLACE(UUID(),'-',''), 22)),
     NEW.id_categoria,
     'General',
     'Subcategoria por defecto',
     1,
-    1
+    1,
+    NEW.creado_por,
+    NEW.modificado_por
   );
 END//
 
