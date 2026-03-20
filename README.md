@@ -9,21 +9,13 @@
 
 Este proyecto corresponde al diseño e implementación de la base de datos para un **Sistema de Presupuesto Personal**.
 
-El objetivo del sistema es permitir a los usuarios gestionar sus finanzas personales mediante el registro de presupuestos, ingresos, gastos y obligaciones financieras.
+El sistema permite gestionar ingresos, gastos, ahorros y obligaciones financieras mediante presupuestos mensuales.
 
-El proyecto incluye:
-
-- Diseño del **modelo entidad–relación (ERD)**
-- Modelo de base de datos utilizando **DBML**
-- Implementación de tablas en **MariaDB**
-- Implementación de **procedimientos almacenados CRUD**
-- Organización estructurada del proyecto en GitHub
+El proyecto incluye modelado, implementación en base de datos y lógica de negocio.
 
 ---
 
 ## Entidades Principales
-
-Las principales entidades del sistema son:
 
 - Usuario  
 - Presupuesto  
@@ -34,97 +26,167 @@ Las principales entidades del sistema son:
 - Transaccion  
 - ObligacionFija_Transaccion  
 
-Estas entidades permiten estructurar la información financiera del usuario y mantener relaciones entre presupuestos, transacciones y categorías.
-
 ---
 
 ## Implementación de Base de Datos
 
 La base de datos fue implementada utilizando **MariaDB** y administrada mediante **DBeaver**.
 
+Se utilizaron:
+
+- Claves primarias y foráneas  
+- Consultas con `INNER JOIN`  
+- Manejo de datos por año y mes  
 
 ---
 
-## Procedimientos Almacenados
+## Auditoría del Sistema
 
-Se implementaron procedimientos almacenados para las operaciones **CRUD (Create, Read, Update, Delete)** de las principales tablas del sistema.
+Se implementó un sistema de auditoría en las principales tablas:
+
+- `creado_por`  
+- `modificado_por`  
+- `creado_en`  
+- `modificado_en`  
+
+Permite controlar quién crea y modifica los registros y cuándo se realizan los cambios.
+
+---
+
+## Procedimientos Almacenados (CRUD)
+
+Se implementaron procedimientos CRUD para:
 
 ### Usuario
-- sp_insertar_usuario
-- sp_actualizar_usuario
-- sp_eliminar_usuario
-- sp_consultar_usuario
-- sp_listar_usuarios
+- sp_insertar_usuario  
+- sp_actualizar_usuario  
+- sp_eliminar_usuario  
+- sp_consultar_usuario  
+- sp_listar_usuarios  
 
 ### Categoria
-- sp_insertar_categoria
-- sp_actualizar_categoria
-- sp_eliminar_categoria
-- sp_consultar_categoria
-- sp_listar_categorias
+- sp_insertar_categoria  
+- sp_actualizar_categoria  
+- sp_eliminar_categoria  
+- sp_consultar_categoria  
+- sp_listar_categorias  
 
 ### Subcategoria
-- sp_insertar_subcategoria
-- sp_actualizar_subcategoria
-- sp_eliminar_subcategoria
-- sp_consultar_subcategoria
-- sp_listar_subcategorias_por_categoria
+- sp_insertar_subcategoria  
+- sp_actualizar_subcategoria  
+- sp_eliminar_subcategoria  
+- sp_consultar_subcategoria  
+- sp_listar_subcategorias_por_categoria  
 
 ### Presupuesto
-- sp_insertar_presupuesto
-- sp_actualizar_presupuesto
-- sp_eliminar_presupuesto
-- sp_consultar_presupuesto
-- sp_listar_presupuestos_usuario
+- sp_insertar_presupuesto  
+- sp_actualizar_presupuesto  
+- sp_eliminar_presupuesto  
+- sp_consultar_presupuesto  
+- sp_listar_presupuestos_usuario  
 
 ### PresupuestoDetalle
-- sp_insertar_presupuesto_detalle
-- sp_actualizar_presupuesto_detalle
-- sp_eliminar_presupuesto_detalle
-- sp_consultar_presupuesto_detalle
-- sp_listar_detalles_presupuesto
+- sp_insertar_presupuesto_detalle  
+- sp_actualizar_presupuesto_detalle  
+- sp_eliminar_presupuesto_detalle  
+- sp_consultar_presupuesto_detalle  
+- sp_listar_detalles_presupuesto  
 
 ### ObligacionFija
-- sp_insertar_obligacion
-- sp_actualizar_obligacion
-- sp_eliminar_obligacion
-- sp_consultar_obligacion
-- sp_listar_obligaciones_usuario
+- sp_insertar_obligacion  
+- sp_actualizar_obligacion  
+- sp_eliminar_obligacion  
+- sp_consultar_obligacion  
+- sp_listar_obligaciones_usuario  
 
 ### Transaccion
-- sp_insertar_transaccion
-- sp_actualizar_transaccion
-- sp_eliminar_transaccion
-- sp_consultar_transaccion
-- sp_listar_transacciones_presupuesto
+- sp_insertar_transaccion  
+- sp_actualizar_transaccion  
+- sp_eliminar_transaccion  
+- sp_consultar_transaccion  
+- sp_listar_transacciones_presupuesto  
 
 ---
 
-## Archivos del Modelo
+## Lógica de Negocio
 
-- `.dbml` → Modelo diseñado en **dbdiagram.io**  
-- `.sql` → Script de creación de tablas compatible con **MariaDB**  
-- `ERD` → Diagrama del modelo entidad-relación  
-- `Procedimientos` → Procedimientos almacenados CRUD  
-- `Funciones` → Funciones SQL del sistema  
-- `Triggers` → Automatización de procesos en la base de datos  
-- `Datos de prueba` → Inserciones de datos para pruebas del sistema  
+Se implementaron procedimientos adicionales:
+
+- sp_crear_presupuesto_completo  
+- sp_registrar_transaccion_completa  
+- sp_procesar_obligaciones_mes  
+- sp_calcular_balance_mensual  
+- sp_calcular_porcentaje_ejecucion_mes  
+- sp_cerrar_presupuesto  
+
+---
+
+## Funciones
+
+Se desarrollaron funciones para:
+
+- Cálculo de montos ejecutados  
+- Cálculo de porcentajes  
+- Validación de vigencia del presupuesto  
+- Proyección de gastos  
+- Cálculo por categoría y subcategoría  
+
+---
+
+## Triggers
+
+Se implementaron triggers para:
+
+- Creación automática de subcategoría por defecto  
+- Automatización de auditoría  
+
+---
+
+## Datos de Prueba
+
+Se generaron datos de prueba para:
+
+- Enero 2026  
+- Febrero 2026  
+
+Incluyendo ingresos, gastos y ahorros.
+
+---
+
+## Archivos del Proyecto
+
+- `.dbml` → modelo  
+- `.sql` → tablas  
+- `procedimientos.sql`  
+- `funciones.sql`  
+- `triggers.sql`  
+- `insertar_datos.sql`  
+
+---
+
+## Orden de Ejecución
+
+1. Crear base de datos  
+2. Ejecutar tablas  
+3. Ejecutar funciones  
+4. Ejecutar triggers  
+5. Ejecutar procedimientos  
+6. Ejecutar datos de prueba  
 
 ---
 
 ## Estado Actual del Proyecto
 
-Actualmente el proyecto incluye:
-
-- Diseño del modelo entidad–relación
-- Modelo en DBML
-- Implementación de tablas en MariaDB
-- Relaciones y claves foráneas
-- Procedimientos almacenados CRUD
-- Organización estructurada del repositorio en GitHub
+- Modelo ERD  
+- Base de datos implementada  
+- CRUD completo  
+- Funciones SQL  
+- Triggers  
+- Lógica de negocio  
+- Datos de prueba funcionales  
 
 ---
 
 ## Autor
 
-Fernando Hernández
+Fernando Hernández  
