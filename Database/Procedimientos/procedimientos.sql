@@ -180,6 +180,7 @@ CREATE PROCEDURE sp_registrar_transaccion_completa(
 BEGIN
   DECLARE v_tipo_categoria VARCHAR(10);
   DECLARE v_id_transaccion VARCHAR(30);
+  DECLARE v_fecha_imputacion DATE;
 
   IF p_mes < 1 OR p_mes > 12 THEN
     SIGNAL SQLSTATE '45000'
@@ -196,14 +197,24 @@ BEGIN
       SET MESSAGE_TEXT = 'La fecha de la transaccion es obligatoria';
   END IF;
 
-  IF p_anio <> YEAR(p_fecha) OR p_mes <> MONTH(p_fecha) THEN
+  IF p_monto IS NULL OR p_monto <= 0 THEN
     SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'El anio y mes no coinciden con la fecha de la transaccion';
+      SET MESSAGE_TEXT = 'El monto debe ser mayor que cero';
+  END IF;
+
+  SET v_fecha_imputacion = STR_TO_DATE(
+    CONCAT(p_anio, '-', LPAD(p_mes, 2, '0'), '-01'),
+    '%Y-%m-%d'
+  );
+
+  IF fn_validar_vigencia_presupuesto(v_fecha_imputacion, p_id_presupuesto) = 0 THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'El anio y mes imputados no estan dentro de la vigencia del presupuesto';
   END IF;
 
   IF fn_validar_vigencia_presupuesto(p_fecha, p_id_presupuesto) = 0 THEN
     SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'La fecha no esta dentro de la vigencia del presupuesto';
+      SET MESSAGE_TEXT = 'La fecha de la transaccion no esta dentro de la vigencia del presupuesto';
   END IF;
 
   SELECT c.tipo_categoria
@@ -263,7 +274,12 @@ BEGIN
     p_creado_por
   );
 
-  SELECT *
+  SELECT *,
+         CASE
+           WHEN p_anio <> YEAR(p_fecha) OR p_mes <> MONTH(p_fecha)
+             THEN 'ADVERTENCIA: el anio/mes imputado es diferente a la fecha real'
+           ELSE 'OK'
+         END AS mensaje_validacion
   FROM transaccion
   WHERE id_transaccion = v_id_transaccion;
 END//
