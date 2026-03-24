@@ -1,192 +1,244 @@
-# Proyecto Teoría de Base de Datos 1
+# Sistema de Presupuesto Personal
 
 **Autor:** Fernando Hernández  
-**Motor de Base de Datos:** MariaDB  
+**Asignatura:** Fundamentos de Bases de Datos  
+**Motor de BD:** MariaDB  
+**Backend:** Java 17 (consola) — VS Code  
 
 ---
 
 ## Descripción
 
-Este proyecto corresponde al diseño e implementación de la base de datos para un **Sistema de Presupuesto Personal**.
-
-El sistema permite gestionar ingresos, gastos, ahorros y obligaciones financieras mediante presupuestos mensuales.
-
-El proyecto incluye modelado, implementación en base de datos y lógica de negocio.
+Sistema completo de gestión de presupuesto personal que permite planificar, controlar y analizar finanzas personales. El usuario puede gestionar ingresos, gastos, obligaciones fijas y metas de ahorro mediante presupuestos mensuales con reportería en PDF.
 
 ---
 
-## Entidades Principales
+## Requisitos previos
 
-- Usuario  
-- Presupuesto  
-- Categoria  
-- Subcategoria  
-- PresupuestoDetalle  
-- ObligacionFija  
-- Transaccion  
-- ObligacionFija_Transaccion  
+| Herramienta | Versión recomendada |
+|---|---|
+| Java (JDK) | 17 |
+| MariaDB | 10.6 o superior |
+| VS Code | Última versión |
+| Extension Pack for Java (VS Code) | Última versión |
 
 ---
 
-## Implementación de Base de Datos
+## Estructura del repositorio
 
-La base de datos fue implementada utilizando **MariaDB** y administrada mediante **DBeaver**.
-
-Se utilizaron:
-
-- Claves primarias y foráneas  
-- Consultas con `INNER JOIN`  
-- Manejo de datos por año y mes  
-
----
-
-## Auditoría del Sistema
-
-Se implementó un sistema de auditoría en las principales tablas:
-
-- `creado_por`  
-- `modificado_por`  
-- `creado_en`  
-- `modificado_en`  
-
-Permite controlar quién crea y modifica los registros y cuándo se realizan los cambios.
-
----
-
-## Procedimientos Almacenados (CRUD)
-
-Se implementaron procedimientos CRUD para:
-
-### Usuario
-- sp_insertar_usuario  
-- sp_actualizar_usuario  
-- sp_eliminar_usuario  
-- sp_consultar_usuario  
-- sp_listar_usuarios  
-
-### Categoria
-- sp_insertar_categoria  
-- sp_actualizar_categoria  
-- sp_eliminar_categoria  
-- sp_consultar_categoria  
-- sp_listar_categorias  
-
-### Subcategoria
-- sp_insertar_subcategoria  
-- sp_actualizar_subcategoria  
-- sp_eliminar_subcategoria  
-- sp_consultar_subcategoria  
-- sp_listar_subcategorias_por_categoria  
-
-### Presupuesto
-- sp_insertar_presupuesto  
-- sp_actualizar_presupuesto  
-- sp_eliminar_presupuesto  
-- sp_consultar_presupuesto  
-- sp_listar_presupuestos_usuario  
-
-### PresupuestoDetalle
-- sp_insertar_presupuesto_detalle  
-- sp_actualizar_presupuesto_detalle  
-- sp_eliminar_presupuesto_detalle  
-- sp_consultar_presupuesto_detalle  
-- sp_listar_detalles_presupuesto  
-
-### ObligacionFija
-- sp_insertar_obligacion  
-- sp_actualizar_obligacion  
-- sp_eliminar_obligacion  
-- sp_consultar_obligacion  
-- sp_listar_obligaciones_usuario  
-
-### Transaccion
-- sp_insertar_transaccion  
-- sp_actualizar_transaccion  
-- sp_eliminar_transaccion  
-- sp_consultar_transaccion  
-- sp_listar_transacciones_presupuesto  
+```
+Proyecto/
+├── README.md
+├── Database/
+│   ├── DDL/
+│   │   └── 01_crear_tablas.sql          # Creación de tablas
+│   ├── Procedimientos/
+│   │   ├── crud_usuario.sql
+│   │   ├── crud_categoria.sql
+│   │   ├── crud_subcategoria.sql
+│   │   ├── crud_presupuesto.sql
+│   │   ├── crud_presupuestodetalle.sql
+│   │   ├── crud_obligacion.sql
+│   │   ├── crud_transaccion.sql
+│   │   └── procedimientos.sql           # Lógica de negocio
+│   ├── Funciones/
+│   │   └── funciones.sql                # 10 funciones del sistema
+│   ├── Triggers/
+│   │   └── triggers.sql                 # Trigger subcategoría por defecto
+│   └── Datos_prueba/
+│       └── insertar_datos.sql           # 2 meses completos de datos
+├── Docs/
+│   ├── ERD.png                          # Diagrama Entidad-Relación
+│   ├── DBML proyecto TBD 1 arreglado.dbml
+│   └── DBML proyecto TBD 1 arreglado.sql
+└── presupuesto-personal/                # Aplicación Java
+    ├── src/
+    │   ├── app/Main.java
+    │   ├── db/ConexionDB.java
+    │   ├── menu/                        # Menús de consola
+    │   ├── service/                     # Lógica de negocio Java
+    │   └── util/InputHelper.java
+    ├── lib/
+    │   ├── mariadb-java-client-3.5.7.jar
+    │   ├── openpdf-1.3.43.jar           # Generación de PDF
+    │   ├── jfreechart-1.5.3.jar         # Gráficos en reportes
+    │   └── jcommon-1.0.24.jar
+    └── .vscode/settings.json
+```
 
 ---
 
-## Lógica de Negocio
+## Instalación y configuración
 
-Se implementaron procedimientos adicionales:
+### 1. Clonar el repositorio
 
-- sp_crear_presupuesto_completo  
-- sp_registrar_transaccion_completa  
-- sp_procesar_obligaciones_mes  
-- sp_calcular_balance_mensual  
-- sp_calcular_porcentaje_ejecucion_mes  
-- sp_cerrar_presupuesto  
+```bash
+git clone https://github.com/Fhernandez20/Proyecto-teoria-1.git
+cd Proyecto-teoria-1
+```
 
----
+### 2. Crear la base de datos en MariaDB
 
-## Funciones
+Abre HeidiSQL, DBeaver o cualquier cliente MariaDB y ejecuta los scripts en este orden:
 
-Se desarrollaron funciones para:
+```sql
+-- Paso 1: Crear la base de datos
+CREATE DATABASE presupuesto_personal;
+USE presupuesto_personal;
 
-- Cálculo de montos ejecutados  
-- Cálculo de porcentajes  
-- Validación de vigencia del presupuesto  
-- Proyección de gastos  
-- Cálculo por categoría y subcategoría  
+-- Paso 2: Crear las tablas
+SOURCE Database/DDL/01_crear_tablas.sql;
 
----
+-- Paso 3: Crear funciones
+SOURCE Database/Funciones/funciones.sql;
 
-## Triggers
+-- Paso 4: Crear triggers
+SOURCE Database/Triggers/triggers.sql;
 
-Se implementaron triggers para:
+-- Paso 5: Crear procedimientos CRUD
+SOURCE Database/Procedimientos/crud_usuario.sql;
+SOURCE Database/Procedimientos/crud_categoria.sql;
+SOURCE Database/Procedimientos/crud_subcategoria.sql;
+SOURCE Database/Procedimientos/crud_presupuesto.sql;
+SOURCE Database/Procedimientos/crud_presupuestodetalle.sql;
+SOURCE Database/Procedimientos/crud_obligacion.sql;
+SOURCE Database/Procedimientos/crud_transaccion.sql;
 
-- Creación automática de subcategoría por defecto  
-- Automatización de auditoría  
+-- Paso 6: Crear procedimientos de negocio
+SOURCE Database/Procedimientos/procedimientos.sql;
 
----
+-- Paso 7: Insertar datos de prueba
+SOURCE Database/Datos_prueba/insertar_datos.sql;
+```
 
-## Datos de Prueba
+### 3. Configurar la conexión
 
-Se generaron datos de prueba para:
+Abre el archivo `presupuesto-personal/src/db/ConexionDB.java` y ajusta los datos de conexión:
 
-- Enero 2026  
-- Febrero 2026  
+```java
+private static final String URL      = "jdbc:mariadb://127.0.0.1:3306/presupuesto_personal";
+private static final String USER     = "root";
+private static final String PASSWORD = "tu_contraseña";
+```
 
-Incluyendo ingresos, gastos y ahorros.
+### 4. Abrir en VS Code
 
----
+```bash
+code presupuesto-personal/
+```
 
-## Archivos del Proyecto
+Asegúrate de tener instalada la extensión **Extension Pack for Java**. VS Code detectará automáticamente los `.jar` en la carpeta `lib/`.
 
-- `.dbml` → modelo  
-- `.sql` → tablas  
-- `procedimientos.sql`  
-- `funciones.sql`  
-- `triggers.sql`  
-- `insertar_datos.sql`  
+### 5. Correr el sistema
 
----
+Abre `src/app/Main.java` y presiona **Run** (▶) o ejecuta desde la terminal:
 
-## Orden de Ejecución
-
-1. Crear base de datos  
-2. Ejecutar tablas  
-3. Ejecutar funciones  
-4. Ejecutar triggers  
-5. Ejecutar procedimientos  
-6. Ejecutar datos de prueba  
-
----
-
-## Estado Actual del Proyecto
-
-- Modelo ERD  
-- Base de datos implementada  
-- CRUD completo  
-- Funciones SQL  
-- Triggers  
-- Lógica de negocio  
-- Datos de prueba funcionales  
+```bash
+cd presupuesto-personal
+java -cp "bin;lib/*" app.Main
+```
 
 ---
 
-## Autor
+## Uso del sistema
 
-Fernando Hernández  
+Al iniciar verás el menú principal:
+
+```
+╔══════════════════════════════════════════════╗
+║       SISTEMA DE PRESUPUESTO PERSONAL        ║
+╠══════════════════════════════════════════════╣
+║   GESTION                                    ║
+║   1. Usuarios                                ║
+║   2. Categorias                              ║
+║   3. Subcategorias                           ║
+║   4. Presupuestos                            ║
+║   5. Obligaciones Fijas                      ║
+║   6. Transacciones                           ║
+║                                              ║
+║   ANALISIS                                   ║
+║   7. Reportes y Consultas                    ║
+║                                              ║
+║   0. Salir                                   ║
+╚══════════════════════════════════════════════╝
+```
+
+### Generación de reportes PDF
+
+Ve a la opción **7 → Reportes**. El sistema pedirá solo el **ID de usuario** y buscará automáticamente el presupuesto activo. Los PDFs se guardan en:
+
+```
+presupuesto-personal/reportes/
+```
+
+Y se abren automáticamente al generarse.
+
+| Reporte | Descripción | Gráfico |
+|---|---|---|
+| 1 | Balance mensual Ingresos vs Gastos vs Ahorros | Barras agrupadas |
+| 2 | Distribución de gastos por categoría | Dona (pie chart) |
+| 3 | Cumplimiento de presupuesto con semáforo | Barras comparativas |
+| 4 | Tendencia de gastos en el tiempo | Líneas múltiples |
+| 5 | Estado de obligaciones fijas | Pie de estado + tabla |
+| 6 | Progreso de metas de ahorro | Barras horizontales |
+
+---
+
+## Base de datos
+
+### Entidades principales
+
+| Tabla | Descripción |
+|---|---|
+| `usuario` | Personas que usan el sistema |
+| `presupuesto` | Plan financiero por periodo |
+| `categoria` | Clasificación principal (ingreso/gasto/ahorro) |
+| `subcategoria` | Clasificación detallada dentro de cada categoría |
+| `presupuestodetalle` | Monto asignado por subcategoría en el presupuesto |
+| `obligacionfija` | Pagos recurrentes mensuales |
+| `transaccion` | Movimientos financieros reales |
+| `obligacionfija_transaccion` | Relación entre obligaciones y sus pagos |
+
+### Procedimientos almacenados
+
+- **35 procedimientos CRUD** (5 por cada entidad)
+- **8 procedimientos de lógica de negocio** (balance, cumplimiento, cierre de presupuesto, etc.)
+
+### Funciones
+
+10 funciones escalares para cálculos financieros: montos ejecutados, porcentajes de ejecución, balances, proyecciones y promedios.
+
+### Triggers
+
+- `trg_categoria_crear_subcategoria` — Crea automáticamente la subcategoría "General" cada vez que se inserta una categoría nueva.
+
+### Campos de auditoría
+
+Todas las tablas incluyen: `creado_por`, `modificado_por`, `creado_en`, `modificado_en`.
+
+---
+
+## Datos de prueba
+
+El script `insertar_datos.sql` genera **2 meses completos** (Enero y Febrero 2026) con:
+
+- 1 usuario con salario de L. 18,000
+- 7 categorías (ingresos, alimentación, vivienda, transporte, salud, entretenimiento, ahorro)
+- +20 subcategorías
+- 5 obligaciones fijas (alquiler, internet, energía, agua, streaming)
+- +35 transacciones distribuidas realistamente
+
+---
+
+## Tecnologías utilizadas
+
+- **MariaDB** — Motor de base de datos relacional
+- **Java 17** — Backend de aplicación de consola
+- **OpenPDF 1.3.43** — Generación de reportes PDF
+- **JFreeChart 1.5.3** — Gráficos estadísticos en PDF
+- **MariaDB JDBC 3.5.7** — Conector Java-MariaDB
+- **VS Code** — IDE de desarrollo
+
+---
+
+*Proyecto Final — Fundamentos de Bases de Datos*
