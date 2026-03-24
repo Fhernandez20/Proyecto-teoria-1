@@ -162,28 +162,6 @@ Al iniciar verás el menú principal:
 ║   0. Salir                                   ║
 ╚══════════════════════════════════════════════╝
 ```
-
-### Generación de reportes PDF
-
-Ve a la opción **7 → Reportes**. El sistema pedirá solo el **ID de usuario** y buscará automáticamente el presupuesto activo. Los PDFs se guardan en:
-
-```
-presupuesto-personal/reportes/
-```
-
-Y se abren automáticamente al generarse.
-
-| Reporte | Descripción | Gráfico |
-|---|---|---|
-| 1 | Balance mensual Ingresos vs Gastos vs Ahorros | Barras agrupadas |
-| 2 | Distribución de gastos por categoría | Dona (pie chart) |
-| 3 | Cumplimiento de presupuesto con semáforo | Barras comparativas |
-| 4 | Tendencia de gastos en el tiempo | Líneas múltiples |
-| 5 | Estado de obligaciones fijas | Pie de estado + tabla |
-| 6 | Progreso de metas de ahorro | Barras horizontales |
-
----
-
 ## Base de datos
 
 ### Entidades principales
